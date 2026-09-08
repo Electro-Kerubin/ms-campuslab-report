@@ -244,3 +244,6 @@ src/
 
 **Última actualización:** *(actualizar en cada cambio relevante)*
 # ms-campuslab-report
+
+pipupipa nifunifa nifanifu nipallanipaca nifrionicaliente increible lol chapalapachala si o si o sino no
+me gusta el pan con queso y queso encima lol equisde me gustaria ganar la loteria y comprarme 3 casas, una pa vivir, una pa mi mami y una pa arrendarla yeraaaaa
