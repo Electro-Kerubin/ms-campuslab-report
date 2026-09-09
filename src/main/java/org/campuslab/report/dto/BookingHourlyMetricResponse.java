@@ -1,6 +1,6 @@
 package org.campuslab.report.dto;
 
-import org.campuslab.report.entity.BookingHourlyMetric;
+import org.campuslab.report.domain.model.BookingHourlyMetric;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

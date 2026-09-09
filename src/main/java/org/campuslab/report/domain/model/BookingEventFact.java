@@ -1,4 +1,4 @@
-package org.campuslab.report.entity;
+package org.campuslab.report.domain.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -9,9 +9,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -19,9 +20,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "booking_event_facts")
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookingEventFact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +47,9 @@ public class BookingEventFact {
     @Column(name = "received_at", nullable = false)
     private ZonedDateTime receivedAt;
 
-    @OneToMany(mappedBy = "bookingEventFact", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @OneToMany(mappedBy = "bookingEventFact", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BookingEventResource> resources = new ArrayList<>();
 
     public void addResource(BookingEventResource resource) {

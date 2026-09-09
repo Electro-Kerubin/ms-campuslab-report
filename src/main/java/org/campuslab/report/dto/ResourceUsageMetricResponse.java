@@ -1,6 +1,6 @@
 package org.campuslab.report.dto;
 
-import org.campuslab.report.entity.ResourceUsageMetric;
+import org.campuslab.report.domain.model.ResourceUsageMetric;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
