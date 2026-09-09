@@ -5,13 +5,13 @@ import org.campuslab.report.dto.BookingEventPayload;
 import org.campuslab.report.dto.BookingResourcePayload;
 import org.campuslab.report.dto.BookingHourlyMetricResponse;
 import org.campuslab.report.dto.ResourceUsageMetricResponse;
-import org.campuslab.report.entity.BookingEventFact;
-import org.campuslab.report.entity.BookingEventResource;
-import org.campuslab.report.entity.BookingHourlyMetric;
-import org.campuslab.report.entity.ResourceUsageMetric;
-import org.campuslab.report.repository.BookingEventFactRepository;
-import org.campuslab.report.repository.BookingHourlyMetricRepository;
-import org.campuslab.report.repository.ResourceUsageMetricRepository;
+import org.campuslab.report.domain.model.BookingEventFact;
+import org.campuslab.report.domain.model.BookingEventResource;
+import org.campuslab.report.domain.model.BookingHourlyMetric;
+import org.campuslab.report.domain.model.ResourceUsageMetric;
+import org.campuslab.report.domain.repository.BookingEventFactRepository;
+import org.campuslab.report.domain.repository.BookingHourlyMetricRepository;
+import org.campuslab.report.domain.repository.ResourceUsageMetricRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,14 +91,16 @@ public class KpiReportService {
     @Transactional(readOnly = true)
     public List<BookingHourlyMetricResponse> getHourlyMetrics(int hours) {
         ZonedDateTime since = ZonedDateTime.now().minusHours(hours);
-        return hourlyMetricRepository.findByBucketHourAfterOrderByBucketHourAsc(since).stream()
+        return hourlyMetricRepository.findByBucketHourAfter(since).stream()
+                .sorted(java.util.Comparator.comparing(BookingHourlyMetric::getBucketHour))
                 .map(BookingHourlyMetricResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
     public List<ResourceUsageMetricResponse> getTopResources(int days) {
         ZonedDateTime since = ZonedDateTime.now().minusDays(days);
-        return resourceMetricRepository.findByPeriodStartAfterOrderByUsageCountDesc(since).stream()
+        return resourceMetricRepository.findByPeriodStartAfter(since).stream()
+                .sorted(java.util.Comparator.comparing(ResourceUsageMetric::getUsageCount).reversed())
                 .map(ResourceUsageMetricResponse::from).toList();
     }
 }
