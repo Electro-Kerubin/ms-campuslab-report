@@ -1,0 +1,36 @@
+services:
+  report-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${REPORT_DB_USER:-campuslab}
+      POSTGRES_PASSWORD: ${REPORT_DB_PASSWORD:-campuslab}
+      POSTGRES_DB: campuslab_report_db
+    volumes:
+      - report-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  report-svc:
+    build: .
+    ports:
+      - "${REPORT_SERVER_PORT:-8080}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://report-db:5432/campuslab_report_db
+      SPRING_DATASOURCE_USERNAME: ${REPORT_DB_USER:-campuslab}
+      SPRING_DATASOURCE_PASSWORD: ${REPORT_DB_PASSWORD:-campuslab}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:-kafka1:9092,kafka2:9092,kafka3:9092}
+      AZURE_AD_TENANT_ID: ${AZURE_AD_TENANT_ID:?AZURE_AD_TENANT_ID is required}
+      AZURE_AD_CLIENT_ID: ${AZURE_AD_CLIENT_ID:?AZURE_AD_CLIENT_ID is required}
+      AZURE_AD_APP_ID_URI: ${AZURE_AD_APP_ID_URI:?AZURE_AD_APP_ID_URI is required}
+      SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_PROFILE_TENANT_ID: ${AZURE_AD_TENANT_ID:?AZURE_AD_TENANT_ID is required}
+      SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_CREDENTIAL_CLIENT_ID: ${AZURE_AD_CLIENT_ID:?AZURE_AD_CLIENT_ID is required}
+      SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_APP_ID_URI: ${AZURE_AD_APP_ID_URI:?AZURE_AD_APP_ID_URI is required}
+    depends_on:
+      report-db:
+        condition: service_healthy
+
+volumes:
+  report-db-data:
