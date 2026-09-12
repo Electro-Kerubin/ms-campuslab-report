@@ -1,4 +1,4 @@
-package org.campuslab.report.entity;
+package org.campuslab.report.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,15 +9,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "booking_event_resources")
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookingEventResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +32,7 @@ public class BookingEventResource {
     @Column(name = "resource_id", nullable = false)
     private Long resourceId;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer quantity = 1;
 }
