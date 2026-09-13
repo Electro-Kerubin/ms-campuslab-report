@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    consumer:
+      group-id: report-group
+      auto-offset-reset: earliest
+
+  cloud:
+    azure:
+      active-directory:
+        profile:
+          tenant-id: ${AZURE_AD_TENANT_ID}
+        credential:
+          client-id: ${AZURE_AD_CLIENT_ID}
+        app-id-uri: ${AZURE_AD_APP_ID_URI}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/${AZURE_AD_TENANT_ID}/v2.0
+
+server:
+  port: ${SERVER_PORT}
