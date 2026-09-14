@@ -1,24 +1,35 @@
 spring:
-  application:
-    name: ms-campuslab-report
   datasource:
-    url: jdbc:postgresql://localhost:5432/campuslab_report_db
-    username: tu_usuario
-    password: tu_password
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/campuslab_report_db}
+    username: ${DB_USER:campuslab}
+    password: ${DB_PASS:campuslab}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    consumer:
+      group-id: report-group
+      auto-offset-reset: earliest
+
   cloud:
     azure:
       active-directory:
-        enabled: true
         profile:
-          tenant-id: ${AZURE_AD_TENANT_ID}
+          tenant-id: ${AZURE_AD_TENANT_ID:changeme}
         credential:
-          client-id: ${AZURE_AD_CLIENT_ID}
-        app-id-uri: ${AZURE_AD_APP_ID_URI}
+          client-id: ${AZURE_AD_CLIENT_ID:changeme}
+        app-id-uri: ${AZURE_AD_APP_ID_URI:changeme}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/${AZURE_AD_TENANT_ID:changeme}/v2.0
+
+server:
+  port: ${SERVER_PORT:8080}
