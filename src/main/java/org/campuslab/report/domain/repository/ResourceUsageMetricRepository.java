@@ -12,4 +12,7 @@ public interface ResourceUsageMetricRepository extends JpaRepository<ResourceUsa
             Long resourceId, ZonedDateTime periodStart, ZonedDateTime periodEnd);
 
     List<ResourceUsageMetric> findByPeriodStartAfter(ZonedDateTime periodStart);
+
+    List<ResourceUsageMetric> findByPeriodStartGreaterThanEqualAndPeriodStartLessThan(
+            ZonedDateTime from, ZonedDateTime to);
 }

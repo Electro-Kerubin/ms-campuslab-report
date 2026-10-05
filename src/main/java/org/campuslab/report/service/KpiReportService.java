@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.time.Clock;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class KpiReportService {
     private final BookingEventFactRepository factRepository;
     private final BookingHourlyMetricRepository hourlyMetricRepository;
     private final ResourceUsageMetricRepository resourceMetricRepository;
+    private final Clock clock;
 
     @Transactional
     public void processBookingEvent(String eventId, ZonedDateTime occurredAt, BookingEventPayload payload) {
@@ -37,9 +39,13 @@ public class KpiReportService {
         fact.setEventId(eventId);
         fact.setBookingId(payload.bookingId());
         fact.setLabId(payload.labId());
+        fact.setUserId(payload.userId());
+        fact.setUserEmail(payload.userEmail());
+        fact.setUserName(payload.userName());
+        fact.setLabName(payload.labName());
         fact.setStatus(payload.status());
         fact.setOccurredAt(occurredAt);
-        fact.setReceivedAt(ZonedDateTime.now());
+        fact.setReceivedAt(ZonedDateTime.now(clock));
 
         List<BookingResourcePayload> resources = payload.resources() == null ? List.of() : payload.resources();
         resources.forEach(resourcePayload -> {
@@ -90,16 +96,32 @@ public class KpiReportService {
 
     @Transactional(readOnly = true)
     public List<BookingHourlyMetricResponse> getHourlyMetrics(int hours) {
-        ZonedDateTime since = ZonedDateTime.now().minusHours(hours);
+        ZonedDateTime since = ZonedDateTime.now(clock).minusHours(hours);
         return hourlyMetricRepository.findByBucketHourAfter(since).stream()
                 .sorted(java.util.Comparator.comparing(BookingHourlyMetric::getBucketHour))
                 .map(BookingHourlyMetricResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
+    public List<BookingHourlyMetricResponse> getHourlyMetrics(ResolvedPeriod period) {
+        return hourlyMetricRepository.findByBucketHourGreaterThanEqualAndBucketHourLessThan(
+                        period.from(), period.to()).stream()
+                .sorted(java.util.Comparator.comparing(BookingHourlyMetric::getBucketHour))
+                .map(BookingHourlyMetricResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<ResourceUsageMetricResponse> getTopResources(int days) {
-        ZonedDateTime since = ZonedDateTime.now().minusDays(days);
+        ZonedDateTime since = ZonedDateTime.now(clock).minusDays(days);
         return resourceMetricRepository.findByPeriodStartAfter(since).stream()
+                .sorted(java.util.Comparator.comparing(ResourceUsageMetric::getUsageCount).reversed())
+                .map(ResourceUsageMetricResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ResourceUsageMetricResponse> getTopResources(ResolvedPeriod period) {
+        return resourceMetricRepository.findByPeriodStartGreaterThanEqualAndPeriodStartLessThan(
+                        period.from(), period.to()).stream()
                 .sorted(java.util.Comparator.comparing(ResourceUsageMetric::getUsageCount).reversed())
                 .map(ResourceUsageMetricResponse::from).toList();
     }

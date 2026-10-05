@@ -38,6 +38,18 @@ public class BookingEventFact {
     @Column(name = "lab_id", nullable = false)
     private Long labId;
 
+    @Column(name = "user_id", length = 128)
+    private String userId;
+
+    @Column(name = "user_email", length = 320)
+    private String userEmail;
+
+    @Column(name = "user_name", length = 200)
+    private String userName;
+
+    @Column(name = "lab_name", length = 200)
+    private String labName;
+
     @Column(nullable = false, length = 20)
     private String status;
 

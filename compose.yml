@@ -21,10 +21,13 @@ services:
       DB_URL: jdbc:postgresql://report-db:5432/${DB_NAME:-campuslab_report_db}
       DB_USER: ${DB_USER:-campuslab}
       DB_PASS: ${DB_PASS:-campuslab}
-      KAFKA_SERVERS: ${KAFKA_SERVERS:-kafka1:9092,kafka2:9092,kafka3:9092}
-      AZURE_AD_TENANT_ID: ${AZURE_AD_TENANT_ID:-changeme}
-      AZURE_AD_CLIENT_ID: ${AZURE_AD_CLIENT_ID:-changeme}
-      AZURE_AD_APP_ID_URI: ${AZURE_AD_APP_ID_URI:-changeme}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS:-kafka1:9092,kafka2:9092,kafka3:9092}
+      KAFKA_GROUP_ID: ${KAFKA_GROUP_ID:-report-service}
+      KAFKA_BOOKINGS_TOPIC: ${KAFKA_BOOKINGS_TOPIC:-bookings.events}
+      KAFKA_DLT_TOPIC: ${KAFKA_DLT_TOPIC:-report.DLT}
+      ISSUER_URI: ${ISSUER_URI:?ISSUER_URI must be configured}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
+      TZ: ${TZ:-America/Santiago}
     depends_on:
       report-db:
         condition: service_healthy

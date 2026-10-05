@@ -11,4 +11,7 @@ public interface BookingHourlyMetricRepository extends JpaRepository<BookingHour
     Optional<BookingHourlyMetric> findByLabIdAndBucketHour(Long labId, ZonedDateTime bucketHour);
 
     List<BookingHourlyMetric> findByBucketHourAfter(ZonedDateTime timestamp);
+
+    List<BookingHourlyMetric> findByBucketHourGreaterThanEqualAndBucketHourLessThan(
+            ZonedDateTime from, ZonedDateTime to);
 }
